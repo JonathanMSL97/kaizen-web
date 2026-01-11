@@ -1,8 +1,14 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronRight, Leaf, Users, Sparkles, Calendar, Instagram, MapPin, Mail } from "lucide-react"
 
 export default function Home() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* NAVEGACIÓN (Sin botón de reservar) */}
@@ -10,7 +16,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* LOGO */}
-            <div className="font-serif text-3xl tracking-tight text-primary font-bold">
+            <div 
+              onClick={scrollToTop}
+              className="font-serif text-3xl tracking-tight text-primary font-bold cursor-pointer hover:opacity-80 transition-opacity"
+            >
               KAIZEN
             </div>
 
@@ -20,8 +29,6 @@ export default function Home() {
               <a href="#servicios" className="text-sm font-medium hover:text-primary transition-colors">Servicios</a>
               <a href="#contacto" className="text-sm font-medium hover:text-primary transition-colors">Contacto</a>
             </div>
-
-            {/* AQUÍ ANTES ESTABA EL BOTÓN, AHORA ESTÁ VACÍO PARA MANTENER EL ESPACIO O PUEDES QUITARLO */}
           </div>
         </div>
       </nav>
@@ -32,7 +39,10 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <h1 className="font-serif text-5xl lg:text-7xl text-foreground font-bold leading-tight">
+                <h1 
+                  onClick={scrollToTop}
+                  className="font-serif text-5xl lg:text-7xl text-foreground font-bold leading-tight cursor-pointer hover:opacity-80 transition-opacity"
+                >
                   KAIZEN <br />
                   <span className="text-primary italic">Mejora Continua</span>
                 </h1>
