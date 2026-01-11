@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/MainButton"
+// Asegúrate de que aquí importas MainButton si cambiaste el nombre, o Button si lo arreglaste de otra forma
+import { Button } from "@/components/ui/MainButton" 
 import { Menu, X, Instagram } from "lucide-react"
 import { usePathname } from "next/navigation"
 
@@ -11,6 +12,15 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   
+  // Bloquear el scroll cuando el menú móvil está abierto (UX Pro)
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [mobileMenuOpen])
+
   // Detectar scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -20,24 +30,43 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Estilos dinámicos
+  // --- LÓGICA DE ESTILOS CORREGIDA ---
   const isHome = pathname === "/"
-  const navBackground = isScrolled || !isHome ? "bg-white/95 backdrop-blur-md shadow-sm text-stone-800" : "bg-transparent text-white"
-  const linkHover = isScrolled || !isHome ? "hover:text-emerald-700" : "hover:text-emerald-200"
+
+  // 1. Definimos el estilo "normal" (cuando el menú está cerrado)
+  const normalStyle = isScrolled || !isHome 
+    ? "bg-white/95 backdrop-blur-md shadow-sm text-stone-800" 
+    : "bg-transparent text-white"
+
+  // 2. Definimos el estilo "abierto" (transparente y texto blanco para verse sobre el fondo negro)
+  const openStyle = "bg-transparent text-white"
+
+  // 3. Elegimos cuál usar
+  const navClasses = mobileMenuOpen ? openStyle : normalStyle
+
+  // Lógica para el hover de los enlaces
+  const linkHover = (mobileMenuOpen || !isHome || isScrolled) 
+    ? "hover:text-emerald-500" 
+    : "hover:text-emerald-200"
   
-  const isActive = (path: string) => pathname === path ? "font-bold text-emerald-600" : ""
+  const isActive = (path: string) => pathname === path ? "font-bold text-emerald-500" : ""
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${navBackground}`}>
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${navClasses}`}>
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
           {/* LOGO */}
-          <Link href="/" className="font-serif text-3xl font-bold tracking-tight z-50">
+          {/* El z-index alto asegura que el logo siempre esté clicable */}
+          <Link 
+            href="/" 
+            className="font-serif text-3xl font-bold tracking-tight z-50 relative"
+            onClick={() => setMobileMenuOpen(false)}
+          >
             KAIZEN
           </Link>
 
-          {/* DESKTOP MENU */}
+          {/* DESKTOP MENU (Oculto en móvil) */}
           <div className="hidden md:flex items-center gap-8">
             <Link href="/" className={`text-sm font-medium transition-colors ${linkHover} ${isActive('/')}`}>Inicio</Link>
             <Link href="/servicios" className={`text-sm font-medium transition-colors ${linkHover} ${isActive('/servicios')}`}>Servicios</Link>
@@ -50,8 +79,8 @@ export default function Navbar() {
               rel="noreferrer"
             >
               <Button 
-                variant={isScrolled || !isHome ? "default" : "outline"}
-                className={isScrolled || !isHome 
+                variant={(!isHome || isScrolled) ? "default" : "outline"}
+                className={(!isHome || isScrolled) 
                   ? "bg-emerald-700 hover:bg-emerald-800 text-white rounded-full" 
                   : "border-white text-white hover:bg-white/20 rounded-full"
                 }
@@ -61,25 +90,32 @@ export default function Navbar() {
             </a>
           </div>
 
-          {/* MOBILE TOGGLE */}
+          {/* MOBILE TOGGLE (HAMBURGUESA/X) */}
           <button 
-            className="md:hidden z-50"
+            className="md:hidden z-50 relative p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
           </button>
         </div>
       </div>
 
       {/* MOBILE MENU OVERLAY */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-stone-900 text-white flex flex-col items-center justify-center space-y-8 md:hidden z-40 animate-in slide-in-from-top-10">
-          <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-serif">Inicio</Link>
-          <Link href="/servicios" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-serif">Servicios</Link>
-          <Link href="/quienes-somos" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-serif">Quiénes Somos</Link>
-          <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-serif text-emerald-400">Comunidad</Link>
+      {/* Usamos un div fijo negro que cubre TODA la pantalla */}
+      <div className={`
+        fixed inset-0 bg-stone-900/95 backdrop-blur-sm z-40 flex flex-col items-center justify-center space-y-8 transition-all duration-300 md:hidden
+        ${mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
+      `}>
+        <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-serif text-white hover:text-emerald-400 transition-colors">Inicio</Link>
+        <Link href="/servicios" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-serif text-white hover:text-emerald-400 transition-colors">Servicios</Link>
+        <Link href="/quienes-somos" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-serif text-white hover:text-emerald-400 transition-colors">Quiénes Somos</Link>
+        <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-serif text-emerald-400 font-bold">Comunidad</Link>
+        
+        {/* Redes en menú móvil */}
+        <div className="flex gap-6 mt-8 pt-8 border-t border-stone-800 w-1/2 justify-center">
+            <a href="https://www.instagram.com/kaizen.fitnessclub/" target="_blank" className="text-white hover:text-pink-500"><Instagram className="w-8 h-8"/></a>
         </div>
-      )}
+      </div>
     </nav>
   )
 }
