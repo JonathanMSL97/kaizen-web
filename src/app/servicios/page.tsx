@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/MainButton"
 import Link from "next/link"
 import { Users, Leaf } from "lucide-react"
 

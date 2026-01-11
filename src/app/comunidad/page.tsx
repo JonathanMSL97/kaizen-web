@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/MainButton"
 import { Instagram, MessageCircle, ArrowRight, Heart, Users } from "lucide-react"
 
 export default function Comunidad() {
