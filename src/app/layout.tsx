@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-// Importamos las fuentes de Google: Inter (Texto) y Playfair Display (Títulos)
-import { Inter, Playfair_Display } from "next/font/google";
+// Asegúrate de tener configurada tu fuente (ej. Inter o una Serif)
+import { Inter, Playfair_Display } from "next/font/google"; 
 import "./globals.css";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans", // Coincide con tu tailwind.config.ts
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-serif", // Coincide con tu tailwind.config.ts
-});
+const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const serif = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
-  title: "Kaizen Fitness Club",
-  description: "Entrenamiento consciente y mejora continua.",
+  title: "Kaizen Fitness Club | Tui",
+  description: "Centro de entrenamiento personal y nutrición en Tui. Mejora continua.",
 };
 
 export default function RootLayout({
@@ -24,9 +19,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground`}>
-        {children}
+    <html lang="es" className="scroll-smooth">
+      <body className={`${sans.variable} ${serif.variable} font-sans antialiased bg-stone-50 text-stone-900`}>
+        <Navbar />
+        <main>
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
